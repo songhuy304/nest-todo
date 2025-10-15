@@ -1,10 +1,19 @@
+// src/main.ts
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { API_CONFIG } from './config';
+import { ConfigService } from '@nestjs/config';
+import { HttpExceptionFilter } from './common/filters';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  app.setGlobalPrefix(API_CONFIG.GLOBAL_PREFIX);
-  await app.listen(API_CONFIG.PORT);
+
+  const configService = app.get(ConfigService);
+  const globalPrefix =
+    configService.get<string>('api.GLOBAL_PREFIX') ?? 'gw/api/v1';
+  const port = configService.get<number>('api.PORT') ?? 3000;
+
+  app.setGlobalPrefix(globalPrefix);
+  app.useGlobalFilters(new HttpExceptionFilter());
+  await app.listen(port);
 }
 void bootstrap();
