@@ -1,27 +1,32 @@
-import { Body, Controller, Get, HttpCode, Param, Post } from '@nestjs/common';
-import { CreateTaskDto } from './dtos';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Param,
+  Post,
+} from '@nestjs/common';
+import { CreateTaskDto, TaskDto } from './dtos';
 import { TasksService } from './tasks.service';
-import { ITask } from './interfaces';
 
 @Controller('tasks')
 export class TasksController {
   constructor(private tasksService: TasksService) {}
 
   @Get()
-  findAll(): ITask[] {
-    return this.tasksService.getAll();
-  }
-
-  @Post()
-  @HttpCode(204)
-  create(@Body() createDto: CreateTaskDto) {
-    return {
-      createDto,
-    };
+  async findAll(): Promise<TaskDto[]> {
+    return await this.tasksService.findAll();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string): string {
-    return `This action returns a #${id} cat`;
+  async findOne(@Param('id') id: number): Promise<TaskDto> {
+    return await this.tasksService.findOne(id);
+  }
+
+  @Post()
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async create(@Body() payload: CreateTaskDto) {
+    return await this.tasksService.create(payload);
   }
 }

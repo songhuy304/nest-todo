@@ -1,23 +1,33 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { ITask } from './interfaces';
+import { Task } from '@/entities/task.entity';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { CreateTaskDto, TaskDto } from './dtos';
+import { mapperTask } from './mappers';
+import { ErrorCodes } from '@/common';
 
 @Injectable()
 export class TasksService {
-  private readonly task: ITask[] = [];
+  constructor(
+    @InjectRepository(Task)
+    private tasksRepository: Repository<Task>,
+  ) {}
 
-  create(task: ITask) {
-    this.task.push(task);
+  async findAll(): Promise<TaskDto[]> {
+    const tasks = await this.tasksRepository.find();
+    return tasks.map(mapperTask.toDto);
   }
 
-  getAll(): ITask[] {
-    return this.task;
-  }
-
-  getOne(id: string) {
-    const task = this.task.find((item) => item.id === id);
+  async findOne(id: number): Promise<TaskDto> {
+    const task = await this.tasksRepository.findOneBy({ id });
     if (!task) {
-      throw new NotFoundException(`Task with id "${id}" not found`);
+      throw new HttpException(ErrorCodes.USER_NOT_FOUND, HttpStatus.NOT_FOUND);
     }
-    return task;
+    return mapperTask.toDto(task);
+  }
+
+  async create(payload: CreateTaskDto) {
+    const saved = await this.tasksRepository.save(payload);
+    return mapperTask.toDto(saved);
   }
 }
