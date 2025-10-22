@@ -5,6 +5,8 @@ import { Repository } from 'typeorm';
 import { CreateTaskDto, TaskDto } from './dtos';
 import { mapperTask } from './mappers';
 import { ErrorCodes } from '@/common';
+import { PageDto, PaginationDto } from '@/common/dtos';
+import { buildPage } from '@/common/helpers';
 
 @Injectable()
 export class TasksService {
@@ -13,9 +15,17 @@ export class TasksService {
     private tasksRepository: Repository<Task>,
   ) {}
 
-  async findAll(): Promise<TaskDto[]> {
-    const tasks = await this.tasksRepository.find();
-    return tasks.map(mapperTask.toDto);
+  async findAll(pagination: PaginationDto): Promise<PageDto<TaskDto>> {
+    const { limit, page } = pagination;
+
+    const [data, total] = await this.tasksRepository.findAndCount({
+      skip: (page - 1) * limit,
+      take: limit,
+    });
+
+    const mappers = data.map((item) => mapperTask.toDto(item));
+
+    return buildPage(mappers, page, limit, total);
   }
 
   async findOne(id: number): Promise<TaskDto> {
