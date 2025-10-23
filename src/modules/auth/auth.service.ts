@@ -6,15 +6,14 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { randomUUID } from 'node:crypto';
 import { Repository } from 'typeorm';
 import { BcryptService } from './bcrypt.service';
-import { SignInDto } from './dtos/sign-in.dto';
-import { SignUpDto } from './dtos/sign-up.dto';
+import { SignInDto, SignUpDto } from './dtos';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly bcryptService: BcryptService,
     @InjectRepository(User)
-    private usersRepository: Repository<User>,
+    private readonly usersRepository: Repository<User>,
     private jwtService: JwtService,
   ) {}
 
