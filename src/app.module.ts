@@ -4,6 +4,8 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { LoggerMiddleware } from '@/common/middleware';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { apiConfig, typeorm } from '@/config';
+import { AuthModule } from './modules/auth/auth.module';
+import { UsersModule } from './modules/users';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -17,6 +19,8 @@ import { apiConfig, typeorm } from '@/config';
         configService.get('typeorm')!,
     }),
     TaskModule,
+    AuthModule,
+    UsersModule,
   ],
   controllers: [],
   providers: [],

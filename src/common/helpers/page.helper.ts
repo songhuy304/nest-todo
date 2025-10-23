@@ -1,6 +1,6 @@
 import { PageDto, PageMetaDto } from '../dtos';
 
-export function buildPage<T>(
+export function createPaginationResponse<T>(
   data: T[],
   page: number,
   limit: number,

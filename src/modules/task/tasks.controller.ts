@@ -6,9 +6,10 @@ import {
   HttpStatus,
   Param,
   Post,
+  Put,
   Query,
 } from '@nestjs/common';
-import { CreateTaskDto, TaskDto } from './dtos';
+import { CreateTaskDto, TaskDto, UpdateTaskDto } from './dtos';
 import { TasksService } from './tasks.service';
 import { PageDto, PaginationDto } from '@/common/dtos';
 
@@ -30,5 +31,12 @@ export class TasksController {
   @HttpCode(HttpStatus.NO_CONTENT)
   async create(@Body() payload: CreateTaskDto) {
     return await this.tasksService.create(payload);
+  }
+  @Put(':id')
+  async update(
+    @Param('id') id: number,
+    @Body() payload: UpdateTaskDto,
+  ): Promise<TaskDto> {
+    return await this.tasksService.update(id, payload);
   }
 }
