@@ -8,6 +8,7 @@ import { Repository } from 'typeorm';
 import { BcryptService } from './bcrypt.service';
 import { SignInDto, SignUpDto } from './dtos';
 import { JwtPayload } from '@/common/interfaces';
+import { IAuthResponse } from './interfaces';
 
 @Injectable()
 export class AuthService {
@@ -18,7 +19,7 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async signIn(user: SignInDto): Promise<{ accessToken: string }> {
+  async signIn(user: SignInDto): Promise<IAuthResponse> {
     const userEntity = await this.usersRepository.findOne({
       where: {
         username: user.username,
@@ -44,7 +45,14 @@ export class AuthService {
       );
     }
 
-    return await this.generateAccessToken(userEntity);
+    const { accessToken, refreshToken } = await this.generateTokens(userEntity);
+
+    await this.usersRepository.update(userEntity.id, { refreshToken });
+
+    return {
+      accessToken,
+      refreshToken,
+    };
   }
 
   async signUp(payload: SignUpDto): Promise<void> {
@@ -71,7 +79,57 @@ export class AuthService {
     return;
   }
 
-  async generateAccessToken(user: User): Promise<{ accessToken: string }> {
+  async refreshTokens(refreshToken: string): Promise<IAuthResponse> {
+    try {
+      const payload =
+        await this.jwtService.verifyAsync<JwtPayload>(refreshToken);
+
+      const user = await this.usersRepository.findOne({
+        where: { id: payload.id },
+      });
+
+      if (!user || !user.refreshToken) {
+        throw new AppException(
+          ErrorCodes.USER_INVALID_TOKEN,
+          HttpStatus.UNAUTHORIZED,
+        );
+      }
+
+      const isMatch = await this.bcryptService.compare(
+        refreshToken,
+        user.refreshToken,
+      );
+
+      if (!isMatch) {
+        throw new AppException(
+          ErrorCodes.USER_INVALID_TOKEN,
+          HttpStatus.UNAUTHORIZED,
+        );
+      }
+
+      const { accessToken, refreshToken: newRefreshToken } =
+        await this.generateTokens(user);
+
+      await this.usersRepository.update(user.id, {
+        refreshToken: newRefreshToken,
+      });
+
+      // 6. Trả token mới
+      return {
+        accessToken,
+        refreshToken: newRefreshToken,
+      };
+    } catch {
+      throw new AppException(
+        ErrorCodes.USER_INVALID_TOKEN,
+        HttpStatus.UNAUTHORIZED,
+      );
+    }
+  }
+
+  async generateTokens(
+    user: User,
+  ): Promise<{ accessToken: string; refreshToken: string }> {
     const tokenId = randomUUID();
 
     const payload: JwtPayload = {
@@ -82,6 +140,12 @@ export class AuthService {
 
     const accessToken = await this.jwtService.signAsync(payload);
 
-    return { accessToken };
+    const refreshToken = await this.jwtService.signAsync(payload, {
+      expiresIn: '7d',
+    });
+
+    const hashedRefresh = await this.bcryptService.hash(refreshToken);
+
+    return { accessToken, refreshToken: hashedRefresh };
   }
 }

@@ -11,13 +11,17 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @Post('login')
   async signIn(@Body() signInDto: SignInDto) {
-    const { accessToken } = await this.authService.signIn(signInDto);
-    return { accessToken };
+    return await this.authService.signIn(signInDto);
   }
 
   @HttpCode(HttpStatus.CREATED)
   @Post('register')
   signUp(@Body() signUpDto: SignUpDto) {
     return this.authService.signUp(signUpDto);
+  }
+
+  @Post('refresh')
+  async refresh(@Body('refreshToken') refreshToken: string) {
+    return this.authService.refreshTokens(refreshToken);
   }
 }
