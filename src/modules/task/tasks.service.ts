@@ -1,6 +1,6 @@
 import { AppException, ErrorCodes } from '@/common';
 import { PageDto, PaginationDto } from '@/common/dtos';
-import { createPaginationResponse } from '@/common/helpers';
+import { paginationResponse } from '@/common/helpers';
 import { Task } from '@/entities/task.entity';
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -25,7 +25,7 @@ export class TasksService {
 
     const mappers = data.map((item) => mapperTask.toDto(item));
 
-    return createPaginationResponse(mappers, page, limit, total);
+    return paginationResponse(mappers, page, limit, total);
   }
 
   async findOne(id: number): Promise<TaskDto> {

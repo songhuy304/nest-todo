@@ -7,6 +7,7 @@ import { randomUUID } from 'node:crypto';
 import { Repository } from 'typeorm';
 import { BcryptService } from './bcrypt.service';
 import { SignInDto, SignUpDto } from './dtos';
+import { JwtPayload } from '@/common/interfaces';
 
 @Injectable()
 export class AuthService {
@@ -70,12 +71,10 @@ export class AuthService {
     return;
   }
 
-  async generateAccessToken(
-    user: Partial<User>,
-  ): Promise<{ accessToken: string }> {
+  async generateAccessToken(user: User): Promise<{ accessToken: string }> {
     const tokenId = randomUUID();
 
-    const payload = {
+    const payload: JwtPayload = {
       id: user.id,
       email: user.email,
       tokenId,

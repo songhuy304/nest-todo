@@ -8,6 +8,7 @@ export enum ErrorCodes {
   //auth
   AUTH_EXPIRED = 'error.auth.expired',
   AUTH_UNAUTHORIZED = 'error.auth.unauthorized',
+  AUTH_FORBIDDEN = 'error.auth.forbidden',
 
   //task
   TASK_NOT_FOUND = 'error.task.not-found',

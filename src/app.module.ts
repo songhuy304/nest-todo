@@ -6,6 +6,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { apiConfig, typeorm } from '@/config';
 import { AuthModule } from './modules/auth/auth.module';
 import { UsersModule } from './modules/users';
+import { APP_GUARD } from '@nestjs/core';
+import { JwtAuthGuard } from './modules/auth/auth.guard';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -23,7 +25,12 @@ import { UsersModule } from './modules/users';
     UsersModule,
   ],
   controllers: [],
-  providers: [],
+  providers: [
+    {
+      provide: APP_GUARD,
+      useClass: JwtAuthGuard,
+    },
+  ],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
