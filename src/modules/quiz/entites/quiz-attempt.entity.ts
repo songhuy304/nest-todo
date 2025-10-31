@@ -6,13 +6,13 @@ import {
   OneToMany,
 } from 'typeorm';
 import { Quiz } from './quiz.entity';
-import { User } from './user.entity';
+import { User } from '../../../entities/user.entity';
 import { AttemptAnswer } from './attempt-answer.entity';
 
 @Entity('quiz_attempts')
 export class QuizAttempt {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+  @PrimaryGeneratedColumn()
+  id: number;
 
   @ManyToOne(() => Quiz, (quiz) => quiz.attempts)
   quiz: Quiz;

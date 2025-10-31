@@ -19,36 +19,10 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async signIn(user: SignInDto): Promise<IAuthResponse> {
-    const userEntity = await this.usersRepository.findOne({
-      where: {
-        username: user.username,
-      },
-    });
-
-    if (!userEntity) {
-      throw new AppException(
-        ErrorCodes.USER_INVALID_CREDENTIALS,
-        HttpStatus.UNAUTHORIZED,
-      );
-    }
-
-    const isPasswordValid = await this.bcryptService.compare(
-      user.password,
-      userEntity.password,
-    );
-
-    if (!isPasswordValid) {
-      throw new AppException(
-        ErrorCodes.USER_INVALID_CREDENTIALS,
-        HttpStatus.UNAUTHORIZED,
-      );
-    }
-
+  async signIn(signInDto: SignInDto): Promise<IAuthResponse> {
+    const userEntity = await this.validateUser(signInDto);
     const { accessToken, refreshToken } = await this.generateTokens(userEntity);
-
     await this.usersRepository.update(userEntity.id, { refreshToken });
-
     return {
       accessToken,
       refreshToken,
@@ -76,6 +50,11 @@ export class AuthService {
       password: hashedPassword,
     });
 
+    return;
+  }
+
+  async logout(userId: number): Promise<void> {
+    await this.usersRepository.update(userId, { refreshToken: null });
     return;
   }
 
@@ -114,7 +93,6 @@ export class AuthService {
         refreshToken: newRefreshToken,
       });
 
-      // 6. Trả token mới
       return {
         accessToken,
         refreshToken: newRefreshToken,
@@ -147,5 +125,34 @@ export class AuthService {
     const hashedRefresh = await this.bcryptService.hash(refreshToken);
 
     return { accessToken, refreshToken: hashedRefresh };
+  }
+
+  async validateUser(signInDto: SignInDto): Promise<User> {
+    const userEntity = await this.usersRepository.findOne({
+      where: {
+        username: signInDto.username,
+      },
+    });
+
+    if (!userEntity) {
+      throw new AppException(
+        ErrorCodes.USER_INVALID_CREDENTIALS,
+        HttpStatus.UNAUTHORIZED,
+      );
+    }
+
+    const isPasswordValid = await this.bcryptService.compare(
+      signInDto.password,
+      userEntity.password,
+    );
+
+    if (!isPasswordValid) {
+      throw new AppException(
+        ErrorCodes.USER_INVALID_CREDENTIALS,
+        HttpStatus.UNAUTHORIZED,
+      );
+    }
+
+    return userEntity;
   }
 }

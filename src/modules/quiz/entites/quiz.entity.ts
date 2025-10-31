@@ -5,15 +5,15 @@ import {
   ManyToOne,
   OneToMany,
 } from 'typeorm';
-import { User } from './user.entity';
+import { User } from '../../../entities/user.entity';
 import { Question } from './question.entity';
 import { QuizAttempt } from './quiz-attempt.entity';
-import { BaseEntity } from './base.entity';
+import { BaseEntity } from '../../../entities/base.entity';
 
 @Entity('quizzes')
 export class Quiz extends BaseEntity {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+  @PrimaryGeneratedColumn()
+  id: number;
 
   @Column()
   title: string;

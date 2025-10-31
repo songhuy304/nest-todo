@@ -29,14 +29,20 @@ export class JwtAuthGuard implements CanActivate {
     const token = this.extractTokenFromHeader(request);
 
     if (!token) {
-      throw new AppException(ErrorCodes.AUTH_FORBIDDEN, HttpStatus.FORBIDDEN);
+      throw new AppException(
+        ErrorCodes.AUTH_UNAUTHORIZED,
+        HttpStatus.UNAUTHORIZED,
+      );
     }
 
     try {
       const payload = await this.jwtService.verifyAsync<JwtPayload>(token);
       request['user'] = payload;
     } catch {
-      throw new AppException(ErrorCodes.AUTH_FORBIDDEN, HttpStatus.FORBIDDEN);
+      throw new AppException(
+        ErrorCodes.AUTH_UNAUTHORIZED,
+        HttpStatus.UNAUTHORIZED,
+      );
     }
 
     return true;

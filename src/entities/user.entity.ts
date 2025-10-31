@@ -9,8 +9,7 @@ import {
 } from 'typeorm';
 import { BaseEntity } from './base.entity';
 import { Role } from './role.entity';
-import { Quiz } from './quiz.entity';
-import { QuizAttempt } from './quiz-attempt.entity';
+import { Quiz, QuizAttempt } from '@/modules/quiz/entites';
 
 @Entity('users')
 export class User extends BaseEntity {
@@ -23,11 +22,17 @@ export class User extends BaseEntity {
   @Column({ unique: true })
   email: string;
 
-  @Column()
-  refreshToken: string;
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  refreshToken: string | null;
 
   @Column()
   password: string;
+
+  @Column({ default: 0 })
+  streakCount: number;
+
+  @Column({ default: 0 })
+  xpPoints: number;
 
   @Column({ nullable: true })
   avatarUrl?: string;

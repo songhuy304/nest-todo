@@ -5,13 +5,14 @@ import {
   ManyToOne,
   OneToMany,
 } from 'typeorm';
-import { Quiz } from './quiz.entity';
 import { Option } from './option.entity';
+import { EQuestionType } from '@/common/enums/';
+import { Quiz } from './quiz.entity';
 
 @Entity('questions')
 export class Question {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+  @PrimaryGeneratedColumn()
+  id: number;
 
   @ManyToOne(() => Quiz, (quiz) => quiz.questions)
   quiz: Quiz;
@@ -19,8 +20,8 @@ export class Question {
   @Column('text')
   questionText: string;
 
-  @Column({ default: 'single_choice' })
-  questionType: 'single_choice' | 'multiple_choice' | 'true_false';
+  @Column({ type: 'enum', enum: EQuestionType })
+  questionType: EQuestionType;
 
   @Column({ default: 1 })
   points: number;

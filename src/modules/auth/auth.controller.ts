@@ -1,25 +1,42 @@
-import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
+import { Public, User } from '@/common/decorator';
+import type { JwtPayload } from '@/common/interfaces';
+import {
+  Body,
+  Controller,
+  Delete,
+  HttpCode,
+  HttpStatus,
+  Post,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { SignInDto, SignUpDto } from './dtos';
-import { Public } from '@/common/decorator';
 
-@Public()
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
 
+  @Public()
   @HttpCode(HttpStatus.OK)
   @Post('login')
   async signIn(@Body() signInDto: SignInDto) {
     return await this.authService.signIn(signInDto);
   }
 
-  @HttpCode(HttpStatus.CREATED)
+  @Public()
+  @HttpCode(HttpStatus.NO_CONTENT)
   @Post('register')
   signUp(@Body() signUpDto: SignUpDto) {
     return this.authService.signUp(signUpDto);
   }
 
+  @HttpCode(HttpStatus.OK)
+  @Delete('logout')
+  logout(@User() req: JwtPayload) {
+    console.log(req);
+    return this.authService.logout(req.id);
+  }
+
+  @Public()
   @Post('refresh')
   async refresh(@Body('refreshToken') refreshToken: string) {
     return this.authService.refreshTokens(refreshToken);
