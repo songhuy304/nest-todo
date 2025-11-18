@@ -7,7 +7,7 @@ import { randomUUID } from 'node:crypto';
 import { Repository } from 'typeorm';
 import { BcryptService } from './bcrypt.service';
 import { SignInDto, SignUpDto } from './dtos';
-import { JwtPayload } from '@/common/interfaces';
+import { JwtUser } from '@/common/interfaces';
 import { IAuthResponse } from './interfaces';
 
 @Injectable()
@@ -60,8 +60,7 @@ export class AuthService {
 
   async refreshTokens(refreshToken: string): Promise<IAuthResponse> {
     try {
-      const payload =
-        await this.jwtService.verifyAsync<JwtPayload>(refreshToken);
+      const payload = await this.jwtService.verifyAsync<JwtUser>(refreshToken);
 
       const user = await this.usersRepository.findOne({
         where: { id: payload.id },
@@ -110,7 +109,7 @@ export class AuthService {
   ): Promise<{ accessToken: string; refreshToken: string }> {
     const tokenId = randomUUID();
 
-    const payload: JwtPayload = {
+    const payload: JwtUser = {
       id: user.id,
       email: user.email,
       tokenId,

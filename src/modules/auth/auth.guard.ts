@@ -1,6 +1,6 @@
 import { AppException, ErrorCodes } from '@/common';
 import { IS_PUBLIC_KEY } from '@/common/decorator';
-import { JwtPayload } from '@/common/interfaces';
+import { JwtUser } from '@/common/interfaces';
 import {
   CanActivate,
   ExecutionContext,
@@ -36,7 +36,7 @@ export class JwtAuthGuard implements CanActivate {
     }
 
     try {
-      const payload = await this.jwtService.verifyAsync<JwtPayload>(token);
+      const payload = await this.jwtService.verifyAsync<JwtUser>(token);
       request['user'] = payload;
     } catch {
       throw new AppException(

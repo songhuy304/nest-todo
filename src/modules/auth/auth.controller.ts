@@ -1,5 +1,5 @@
 import { Public, User } from '@/common/decorator';
-import type { JwtPayload } from '@/common/interfaces';
+import type { JwtUser } from '@/common/interfaces';
 import {
   Body,
   Controller,
@@ -31,7 +31,7 @@ export class AuthController {
 
   @HttpCode(HttpStatus.OK)
   @Delete('logout')
-  logout(@User() req: JwtPayload) {
+  logout(@User() req: JwtUser) {
     console.log(req);
     return this.authService.logout(req.id);
   }
