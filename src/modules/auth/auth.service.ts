@@ -1,5 +1,5 @@
 import { AppException, ErrorCodes } from '@/common';
-import { User } from '@/entities';
+import { User } from '@/modules/users/entities';
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';

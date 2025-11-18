@@ -1,8 +1,8 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
-import { BaseEntity } from './base.entity';
 import { User } from './user.entity';
 import { ERole } from '@/common/enums';
 import { IsEnum } from 'class-validator';
+import { BaseEntity } from '@/entities';
 
 @Entity('roles')
 export class Role extends BaseEntity {

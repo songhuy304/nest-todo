@@ -1,16 +1,17 @@
 import { AppException, ErrorCodes } from '@/common';
-import { User } from '@/entities';
+import { Resume, User } from '@/modules/users/entities';
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { UserDto } from './dtos';
-import { mapperUser } from './mappers';
+import { ResumeDto, UserDto } from './dtos';
+import { mapperUser, resumeMapper } from './mappers';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User)
     private usersRepository: Repository<User>,
+    private resumeRepository: Repository<Resume>,
   ) {}
 
   async getMe(userId: number): Promise<UserDto> {
@@ -24,5 +25,17 @@ export class UsersService {
     }
 
     return mapperUser.toDto(user);
+  }
+
+  async getResume(userId: number): Promise<ResumeDto | null> {
+    const resume = await this.resumeRepository.findOne({
+      where: {
+        user: { id: userId },
+      },
+    });
+
+    if (!resume) return null;
+
+    return resumeMapper.toDto(resume);
   }
 }

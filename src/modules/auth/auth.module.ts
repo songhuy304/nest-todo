@@ -5,7 +5,7 @@ import { BcryptService } from './bcrypt.service';
 import { UsersModule } from '../users';
 import { JwtModule } from '@nestjs/jwt';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { User } from '@/entities';
+import { User } from '@/modules/users/entities';
 import { jwtConfig } from '@/config';
 
 @Module({

@@ -6,10 +6,12 @@ import {
   ManyToOne,
   JoinColumn,
   OneToMany,
+  OneToOne,
 } from 'typeorm';
-import { BaseEntity } from './base.entity';
 import { Role } from './role.entity';
 import { Quiz, QuizAttempt } from '@/modules/quiz/entites';
+import { Resume } from './resume.entity';
+import { BaseEntity } from '@/entities';
 
 @Entity('users')
 export class User extends BaseEntity {
@@ -46,6 +48,9 @@ export class User extends BaseEntity {
 
   @OneToMany(() => Quiz, (quiz) => quiz.createdBy)
   quizzes: Quiz[];
+
+  @OneToOne(() => Resume, (resume) => resume.user)
+  resume: Resume;
 
   @OneToMany(() => QuizAttempt, (attempt) => attempt.user)
   attempts: QuizAttempt[];

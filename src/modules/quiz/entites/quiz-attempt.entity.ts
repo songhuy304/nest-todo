@@ -6,7 +6,7 @@ import {
   OneToMany,
 } from 'typeorm';
 import { Quiz } from './quiz.entity';
-import { User } from '../../../entities/user.entity';
+import { User } from '../../users/entities/user.entity';
 import { AttemptAnswer } from './attempt-answer.entity';
 
 @Entity('quiz_attempts')

@@ -5,7 +5,7 @@ import {
   ManyToOne,
   OneToMany,
 } from 'typeorm';
-import { User } from '../../../entities/user.entity';
+import { User } from '../../users/entities/user.entity';
 import { Question } from './question.entity';
 import { QuizAttempt } from './quiz-attempt.entity';
 import { BaseEntity } from '../../../entities/base.entity';

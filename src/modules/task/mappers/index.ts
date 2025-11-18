@@ -1,4 +1,4 @@
-import { Task } from '@/entities/task.entity';
+import { Task } from '@/modules/users/entities/task.entity';
 import { TaskDto } from '../dtos';
 
 export const mapperTask = {

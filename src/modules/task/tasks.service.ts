@@ -1,7 +1,7 @@
 import { AppException, ErrorCodes } from '@/common';
 import { PageDto, PaginationDto } from '@/common/dtos';
 import { paginationResponse } from '@/common/helpers';
-import { Task } from '@/entities/task.entity';
+import { Task } from '@/modules/users/entities/task.entity';
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
