@@ -1,5 +1,5 @@
-function toISOStringSafe(date?: Date | null): string | undefined {
-  return date ? date.toISOString() : undefined;
-}
+const toIso = (value: unknown): string | null => {
+  return value instanceof Date ? value.toISOString() : null;
+};
 
-export { toISOStringSafe };
+export { toIso };

@@ -1,3 +1,4 @@
+import { PageDto, PaginationDto } from '@/common/dtos';
 import {
   Body,
   Controller,
@@ -8,11 +9,9 @@ import {
   Post,
   Put,
   Query,
-  Request,
 } from '@nestjs/common';
 import { CreateTaskDto, TaskDto, UpdateTaskDto } from './dtos';
 import { TasksService } from './tasks.service';
-import { PageDto, PaginationDto } from '@/common/dtos';
 
 @Controller('tasks')
 export class TasksController {

@@ -14,5 +14,6 @@ export enum ErrorCodes {
   //task
   TASK_NOT_FOUND = 'error.task.not-found',
 
+  //common
   INTERNAL_ERROR = 'error.internal',
 }

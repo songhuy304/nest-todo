@@ -1,21 +1,25 @@
 import { BaseEntity } from '@/entities';
-import { Column, Entity, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
-import { User } from './user.entity';
-import type {
-  PersonalInformationResume,
-  ExperienceResume,
-  ProjectResume,
-  EducationResume,
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  OneToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+
+import { User } from '@/modules/users/entities';
+import {
   CertificationResume,
+  EducationResume,
+  ExperienceResume,
+  PersonalInformationResumeDto,
+  ProjectResume,
 } from '../interfaces';
 
 @Entity('resumes')
 export class Resume extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
-
-  @Column({ type: 'varchar', length: 255 })
-  name: string;
 
   @Column({ type: 'varchar', length: 255 })
   title: string;
@@ -27,7 +31,7 @@ export class Resume extends BaseEntity {
   url?: string;
 
   @Column({ type: 'json', nullable: true })
-  personalInformation: PersonalInformationResume;
+  personalInformation: PersonalInformationResumeDto;
 
   @Column({ type: 'json', nullable: true })
   experiences: ExperienceResume[];
@@ -45,5 +49,6 @@ export class Resume extends BaseEntity {
   certifications: CertificationResume[];
 
   @OneToOne(() => User, (user) => user.resume)
+  @JoinColumn()
   user: User;
 }

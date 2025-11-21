@@ -1,5 +1,11 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
-import { AuthModule, JwtAuthGuard, QuizModule, UsersModule } from '@/modules';
+import {
+  AuthModule,
+  JwtAuthGuard,
+  QuizModule,
+  UsersModule,
+  ResumesModule,
+} from '@/modules';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { LoggerMiddleware } from '@/common/middleware';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -20,6 +26,7 @@ import { APP_GUARD } from '@nestjs/core';
     AuthModule,
     UsersModule,
     QuizModule,
+    ResumesModule,
   ],
   controllers: [],
   providers: [

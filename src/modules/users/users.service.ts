@@ -1,20 +1,19 @@
 import { AppException, ErrorCodes } from '@/common';
-import { Resume, User } from '@/modules/users/entities';
+import { User } from '@/modules/users/entities';
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { ResumeDto, UserDto } from './dtos';
-import { mapperUser, resumeMapper } from './mappers';
+import { UserDto } from './dtos';
+import { mapperUser } from './mappers';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User)
     private usersRepository: Repository<User>,
-    private resumeRepository: Repository<Resume>,
   ) {}
 
-  async getMe(userId: number): Promise<UserDto> {
+  async findOne(userId: number): Promise<UserDto> {
     const user = await this.usersRepository.findOne({
       where: {
         id: userId,
@@ -27,15 +26,16 @@ export class UsersService {
     return mapperUser.toDto(user);
   }
 
-  async getResume(userId: number): Promise<ResumeDto | null> {
-    const resume = await this.resumeRepository.findOne({
+  async getMe(userId: number): Promise<UserDto> {
+    const user = await this.usersRepository.findOne({
       where: {
-        user: { id: userId },
+        id: userId,
       },
     });
+    if (!user) {
+      throw new AppException(ErrorCodes.USER_NOT_FOUND, HttpStatus.NOT_FOUND);
+    }
 
-    if (!resume) return null;
-
-    return resumeMapper.toDto(resume);
+    return mapperUser.toDto(user);
   }
 }

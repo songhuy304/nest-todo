@@ -10,8 +10,8 @@ import {
 } from 'typeorm';
 import { Role } from './role.entity';
 import { Quiz, QuizAttempt } from '@/modules/quiz/entites';
-import { Resume } from './resume.entity';
 import { BaseEntity } from '@/entities';
+import { Resume } from '@/modules/resume/entities';
 
 @Entity('users')
 export class User extends BaseEntity {

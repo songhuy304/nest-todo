@@ -32,7 +32,6 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @Delete('logout')
   logout(@User() req: JwtUser) {
-    console.log(req);
     return this.authService.logout(req.id);
   }
 
