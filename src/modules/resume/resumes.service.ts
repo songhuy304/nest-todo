@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { UsersService } from '../users';
 import { CreateResumeDto, ResumeDto } from './dtos';
 import { Resume } from './entities';
 import { resumeMapper } from './mappers';
@@ -11,7 +10,6 @@ export class ResumesService {
   constructor(
     @InjectRepository(Resume)
     private resumeRepository: Repository<Resume>,
-    private usersService: UsersService,
   ) {}
 
   async getResume(userId: number): Promise<ResumeDto | null> {

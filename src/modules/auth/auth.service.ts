@@ -104,26 +104,20 @@ export class AuthService {
     }
   }
 
-  async generateTokens(
-    user: User,
-  ): Promise<{ accessToken: string; refreshToken: string }> {
+  async generateTokens(user: User) {
     const tokenId = randomUUID();
+    const payload = { id: user.id, email: user.email, tokenId };
 
-    const payload: JwtUser = {
-      id: user.id,
-      email: user.email,
-      tokenId,
-    };
-
-    const accessToken = await this.jwtService.signAsync(payload);
-
-    const refreshToken = await this.jwtService.signAsync(payload, {
+    const accessToken = this.jwtService.sign(payload);
+    const refreshToken = this.jwtService.sign(payload, {
       expiresIn: '7d',
     });
 
-    const hashedRefresh = await this.bcryptService.hash(refreshToken);
+    const hashed = await this.bcryptService.hash(refreshToken);
 
-    return { accessToken, refreshToken: hashedRefresh };
+    await this.usersRepository.update(user.id, { refreshToken: hashed });
+
+    return { accessToken, refreshToken };
   }
 
   async validateUser(signInDto: SignInDto): Promise<User> {
