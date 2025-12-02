@@ -1,10 +1,8 @@
-// src/modules/auth/auth.service.ts
 import { AppException, ErrorCodes } from '@/common';
 import { User } from '@/modules/users/entities';
 import { HttpStatus, Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
-import { randomUUID } from 'crypto';
 import { Repository } from 'typeorm';
 import { BcryptService } from './bcrypt.service';
 import { SignInDto, SignUpDto } from './dtos';
@@ -32,7 +30,7 @@ export class AuthService {
   async signIn(user: SignInDto): Promise<IAuthResponse> {
     const validateUser = await this.validateUser(user);
 
-    const token = this.generateTokens(validateUser);
+    const token = await this.generateTokens(validateUser.id);
     const hashed = await this.bcryptService.hash(token.refreshToken);
     await this.usersRepository.update(validateUser.id, {
       refreshToken: hashed,
@@ -59,7 +57,7 @@ export class AuthService {
       if (!isMatch) throw new UnauthorizedException('Invalid token');
 
       const { accessToken, refreshToken: newRefreshToken } =
-        this.generateTokens(user);
+        await this.generateTokens(user.id);
       const hashed = await this.bcryptService.hash(newRefreshToken);
       await this.usersRepository.update(user.id, { refreshToken: hashed });
       return { accessToken, refreshToken: newRefreshToken };
@@ -68,19 +66,20 @@ export class AuthService {
     }
   }
 
-  private generateTokens(user: User) {
-    const tokenId = randomUUID();
-    const payload: IJwtPayload = { id: user.id, email: user.email, tokenId };
+  private async generateTokens(userId: number) {
+    const payload: IJwtPayload = { id: userId };
 
-    const accessToken = this.jwtService.sign(payload);
-    const refreshToken = this.jwtService.sign(payload, { expiresIn: '7d' });
+    const [accessToken, refreshToken] = await Promise.all([
+      this.jwtService.signAsync(payload),
+      this.jwtService.signAsync(payload, { expiresIn: '7d' }),
+    ]);
 
     return { accessToken, refreshToken };
   }
 
   async validateUser(signInDto: SignInDto): Promise<User> {
-    const user = await this.usersRepository.findOne({
-      where: { username: signInDto.username },
+    const user = await this.usersRepository.findOneBy({
+      username: signInDto.username,
     });
     if (!user)
       throw new AppException(
@@ -98,6 +97,16 @@ export class AuthService {
         HttpStatus.UNAUTHORIZED,
       );
 
+    return user;
+  }
+
+  async validateJwtUser(userId: number) {
+    const user = await this.usersRepository.findOne({
+      where: { id: userId },
+      select: ['id', 'email', 'username'],
+    });
+
+    if (!user) throw new UnauthorizedException('User not found!');
     return user;
   }
 }

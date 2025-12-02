@@ -1,13 +1,5 @@
-import { Public, User } from '@/common/decorator';
-import type { JwtUser } from '@/common/interfaces';
-import {
-  Body,
-  Controller,
-  Delete,
-  HttpCode,
-  HttpStatus,
-  Post,
-} from '@nestjs/common';
+import { Public } from '@/common/decorator';
+import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { SignInDto, SignUpDto } from './dtos';
 
@@ -27,12 +19,6 @@ export class AuthController {
   @Post('register')
   signUp(@Body() signUpDto: SignUpDto) {
     return this.authService.signUp(signUpDto);
-  }
-
-  @HttpCode(HttpStatus.OK)
-  @Delete('logout')
-  logout(@User() req: JwtUser) {
-    return this.authService.logout(req.id);
   }
 
   @Public()

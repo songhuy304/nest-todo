@@ -5,6 +5,4 @@ export interface IAuthResponse {
 
 export interface IJwtPayload {
   id: number;
-  email: string;
-  tokenId: string;
 }
