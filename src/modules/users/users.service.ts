@@ -13,29 +13,20 @@ export class UsersService {
     private usersRepository: Repository<User>,
   ) {}
 
-  async findOne(userId: number): Promise<UserDto> {
-    const user = await this.usersRepository.findOne({
-      where: {
-        id: userId,
-      },
-    });
+  async findOne(userId: number): Promise<User> {
+    const user = await this.usersRepository.findOneBy({ id: userId });
     if (!user) {
       throw new AppException(ErrorCodes.USER_NOT_FOUND, HttpStatus.NOT_FOUND);
     }
-
-    return mapperUser.toDto(user);
+    return user;
   }
 
   async getMe(userId: number): Promise<UserDto> {
-    const user = await this.usersRepository.findOne({
-      where: {
-        id: userId,
-      },
-    });
-    if (!user) {
-      throw new AppException(ErrorCodes.USER_NOT_FOUND, HttpStatus.NOT_FOUND);
-    }
-
+    const user = await this.findOne(userId);
     return mapperUser.toDto(user);
+  }
+
+  async logout(userId: number) {
+    await this.usersRepository.update(userId, { refreshToken: null });
   }
 }

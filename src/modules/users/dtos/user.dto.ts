@@ -1,13 +1,6 @@
-import { Expose, Transform, Type } from 'class-transformer';
-import {
-  IsEnum,
-  IsBoolean,
-  IsEmail,
-  IsInt,
-  IsOptional,
-  IsString,
-} from 'class-validator';
 import { ERole } from '@/common/enums';
+import { Expose } from 'class-transformer';
+import { IsEnum } from 'class-validator';
 
 export class UserDto {
   @Expose()
@@ -25,9 +18,4 @@ export class UserDto {
   @Expose()
   @IsEnum(ERole)
   role: ERole;
-
-  @Expose()
-  @IsOptional()
-  @Transform(({ obj }) => obj.resume?.url ?? null, { toPlainOnly: true })
-  resumePath?: string;
 }

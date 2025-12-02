@@ -12,15 +12,16 @@ export class ResumesService {
     private resumeRepository: Repository<Resume>,
   ) {}
 
-  async getResume(userId: number): Promise<ResumeDto | null> {
-    const resume = await this.resumeRepository.findOne({
-      where: {
-        user: { id: userId },
-      },
+  async findResumeByUser(userId: number): Promise<Resume | null> {
+    const resume = await this.resumeRepository.findOneBy({
+      user: { id: userId },
     });
+    return resume ?? null;
+  }
 
+  async getResume(userId: number): Promise<ResumeDto | null> {
+    const resume = await this.findResumeByUser(userId);
     if (!resume) return null;
-
     return resumeMapper.toDto(resume);
   }
 
@@ -28,9 +29,7 @@ export class ResumesService {
     userId: number,
     createResumeDto: CreateResumeDto,
   ): Promise<ResumeDto> {
-    const existingResume = await this.resumeRepository.findOne({
-      where: { user: { id: userId } },
-    });
+    const existingResume = await this.findResumeByUser(userId);
 
     if (existingResume) {
       const updatedResume = await this.resumeRepository.save({

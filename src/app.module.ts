@@ -1,16 +1,9 @@
-import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
-import {
-  AuthModule,
-  JwtAuthGuard,
-  QuizModule,
-  UsersModule,
-  ResumesModule,
-} from '@/modules';
-import { ConfigModule, ConfigService } from '@nestjs/config';
 import { LoggerMiddleware } from '@/common/middleware';
-import { TypeOrmModule } from '@nestjs/typeorm';
 import { apiConfig, typeorm } from '@/config';
-import { APP_GUARD } from '@nestjs/core';
+import { AuthModule, QuizModule, ResumesModule, UsersModule } from '@/modules';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { TypeOrmModule } from '@nestjs/typeorm';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -29,12 +22,6 @@ import { APP_GUARD } from '@nestjs/core';
     ResumesModule,
   ],
   controllers: [],
-  providers: [
-    {
-      provide: APP_GUARD,
-      useClass: JwtAuthGuard,
-    },
-  ],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {

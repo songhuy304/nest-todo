@@ -7,10 +7,11 @@ import { JwtModule } from '@nestjs/jwt';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from '@/modules/users/entities';
 import { jwtConfig } from '@/config';
+import { JwtStrategy } from './strategies/jwt.strategy';
 
 @Module({
   controllers: [AuthController],
-  providers: [AuthService, BcryptService],
+  providers: [AuthService, BcryptService, JwtStrategy],
   exports: [AuthService],
   imports: [
     UsersModule,
