@@ -1,7 +1,7 @@
 export interface ProjectResume {
   nameProject: string;
-  description?: string;
+  projectDescription?: string;
   startDate?: string;
   endDate?: string;
-  isCurrent?: boolean;
+  role?: string;
 }

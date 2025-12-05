@@ -1,5 +1,5 @@
 import { Expose } from 'class-transformer';
-import { IsOptional, IsString, IsBoolean } from 'class-validator';
+import { IsOptional, IsString } from 'class-validator';
 
 export class ProjectResumeDto {
   @Expose()
@@ -9,7 +9,7 @@ export class ProjectResumeDto {
   @IsOptional()
   @Expose()
   @IsString()
-  description?: string;
+  projectDescription?: string;
 
   @IsOptional()
   @IsString()
@@ -22,7 +22,7 @@ export class ProjectResumeDto {
   endDate?: string;
 
   @IsOptional()
-  @IsBoolean()
+  @IsString()
   @Expose()
-  isCurrent?: boolean;
+  role?: string;
 }

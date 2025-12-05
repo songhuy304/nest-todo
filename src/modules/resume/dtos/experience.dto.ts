@@ -29,5 +29,5 @@ export class ExperienceResumeDto {
   @IsOptional()
   @Expose()
   @IsBoolean()
-  isCurrentRole?: boolean;
+  jobRole?: boolean;
 }
